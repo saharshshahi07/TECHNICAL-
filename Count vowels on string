@@ -1,0 +1,20 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+
+int main() {
+    std::string str;
+    std::cout << "Enter a string: ";
+    std::getline(std::cin, str);
+
+    int vowelCount = 0;
+    for (char ch : str) {
+        char lower = std::tolower(ch);
+        if (lower == 'a' || lower == 'e' || lower == 'i' || lower == 'o' || lower == 'u') {
+            vowelCount++;
+        }
+    }
+
+    std::cout << "Total vowels: " << vowelCount << "\n";
+    return 0;
+}
