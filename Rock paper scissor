@@ -1,0 +1,158 @@
+#include <iostream>
+#include <string>
+#include <random>
+#include <limits>
+
+enum class Choice {
+    ROCK = 1,
+    PAPER = 2,
+    SCISSORS = 3,
+    INVALID = 0
+};
+
+enum class Outcome {
+    WIN,
+    LOSE,
+    DRAW
+};
+
+class RockPaperScissors {
+private:
+    int userScore;
+    int computerScore;
+    int totalRounds;
+    std::mt19937 rng;
+
+    Choice getComputerChoice() {
+        std::uniform_int_distribution<int> dist(1, 3);
+        return static_cast<Choice>(dist(rng));
+    }
+
+    std::string choiceToString(Choice choice) const {
+        switch (choice) {
+            case Choice::ROCK:     return "Rock (Stone)";
+            case Choice::PAPER:    return "Paper";
+            case Choice::SCISSORS: return "Scissors";
+            default:               return "Invalid";
+        }
+    }
+
+    Outcome evaluateRound(Choice user, Choice comp) const {
+        if (user == comp) {
+            return Outcome::DRAW;
+        }
+
+        // Winning rules:
+        // Rock beats Scissors
+        // Paper beats Rock
+        // Scissors beats Paper
+        if ((user == Choice::ROCK && comp == Choice::SCISSORS) ||
+            (user == Choice::PAPER && comp == Choice::ROCK) ||
+            (user == Choice::SCISSORS && comp == Choice::PAPER)) {
+            return Outcome::WIN;
+        }
+
+        return Outcome::LOSE;
+    }
+
+    void clearBuffer() {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+public:
+    RockPaperScissors() 
+        : userScore(0), computerScore(0), totalRounds(0), rng(std::random_device{}()) {}
+
+    void showRules() const {
+        std::cout << "\n=======================================================\n";
+        std::cout << "             ROCK PAPER SCISSORS - RULES               \n";
+        std::cout << "=======================================================\n";
+        std::cout << " * Rock vs Scissors -> Rock wins (crushes Scissors)\n";
+        std::cout << " * Rock vs Paper    -> Paper wins (covers Rock)\n";
+        std::cout << " * Paper vs Scissors-> Scissors wins (cuts Paper)\n";
+        std::cout << "=======================================================\n\n";
+    }
+
+    void playRound() {
+        int inputChoice = 0;
+
+        while (true) {
+            std::cout << "\nChoose an option:\n";
+            std::cout << "1. Rock (Stone)\n";
+            std::cout << "2. Paper\n";
+            std::cout << "3. Scissors\n";
+            std::cout << "Your Choice (1-3): ";
+
+            if (std::cin >> inputChoice && inputChoice >= 1 && inputChoice <= 3) {
+                break;
+            }
+            std::cout << "Invalid selection! Enter 1, 2, or 3.\n";
+            clearBuffer();
+        }
+
+        Choice userChoice = static_cast<Choice>(inputChoice);
+        Choice compChoice = getComputerChoice();
+        Outcome result = evaluateRound(userChoice, compChoice);
+
+        totalRounds++;
+
+        std::cout << "\n-------------------------------------------------------\n";
+        std::cout << "You chose      : " << choiceToString(userChoice) << "\n";
+        std::cout << "Computer chose : " << choiceToString(compChoice) << "\n";
+        std::cout << "-------------------------------------------------------\n";
+
+        if (result == Outcome::WIN) {
+            userScore++;
+            std::cout << "Result: You WIN this round!\n";
+        } else if (result == Outcome::LOSE) {
+            computerScore++;
+            std::cout << "Result: Computer WINS this round!\n";
+        } else {
+            std::cout << "Result: It's a DRAW!\n";
+        }
+
+        std::cout << "Current Score  -> You: " << userScore 
+                  << " | Computer: " << computerScore << "\n";
+    }
+
+    void start() {
+        showRules();
+        char playAgain = 'y';
+
+        while (playAgain == 'y' || playAgain == 'Y') {
+            playRound();
+
+            std::cout << "\nDo you want to play another round? (y/n): ";
+            std::cin >> playAgain;
+        }
+
+        displayFinalScore();
+    }
+
+    void displayFinalScore() const {
+        std::cout << "\n=======================================================\n";
+        std::cout << "                     FINAL STATS                       \n";
+        std::cout << "=======================================================\n";
+        std::cout << "Total Rounds Played : " << totalRounds << "\n";
+        std::cout << "Your Score          : " << userScore << "\n";
+        std::cout << "Computer Score      : " << computerScore << "\n";
+        std::cout << "Draws               : " << (totalRounds - userScore - computerScore) << "\n";
+        std::cout << "-------------------------------------------------------\n";
+
+        if (userScore > computerScore) {
+            std::cout << "SERIES CHAMPION: Congratulations! You won the game!\n";
+        } else if (computerScore > userScore) {
+            std::cout << "SERIES CHAMPION: Computer won the game! Better luck next time.\n";
+        } else {
+            std::cout << "SERIES CHAMPION: It's an overall DRAW!\n";
+        }
+        std::cout << "=======================================================\n";
+    }
+};
+
+int main() {
+    RockPaperScissors game;
+    game.start();
+    return 0;
+}
