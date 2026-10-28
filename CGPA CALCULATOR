@@ -1,0 +1,192 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <limits>
+#include <algorithm>
+
+struct Course {
+    std::string courseCode;
+    std::string courseName;
+    double credits;
+    std::string grade;
+    double gradePoint;
+};
+
+class CGPACalculator {
+private:
+    std::string studentName;
+    std::string rollNumber;
+    int totalSemesters;
+    std::vector<double> semesterGPAs;
+    std::vector<double> semesterCredits;
+
+    double convertGradeToPoint(const std::string& grade) {
+        std::string g = grade;
+        std::transform(g.begin(), g.end(), g.begin(), ::toupper);
+
+        if (g == "O" || g == "A++") return 10.0;
+        if (g == "A+" || g == "O-")  return 9.0;
+        if (g == "A")                return 8.0;
+        if (g == "B+")               return 7.0;
+        if (g == "B")                return 6.0;
+        if (g == "C")                return 5.0;
+        if (g == "P" || g == "D")    return 4.0;
+        if (g == "F")                return 0.0;
+        return -1.0; // Invalid grade
+    }
+
+    void clearBuffer() {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+public:
+    CGPACalculator(const std::string& name, const std::string& roll, int semesters)
+        : studentName(name), rollNumber(roll), totalSemesters(semesters) {}
+
+    void processSemesterResults() {
+        for (int sem = 1; sem <= totalSemesters; ++sem) {
+            int courseCount = 0;
+            std::cout << "\n============================================\n";
+            std::cout << "             SEMESTER " << sem << " DETAILS         \n";
+            std::cout << "============================================\n";
+
+            while (true) {
+                std::cout << "Enter number of courses for Semester " << sem << ": ";
+                if (std::cin >> courseCount && courseCount > 0) {
+                    break;
+                }
+                std::cout << "Invalid input! Number of courses must be > 0.\n";
+                clearBuffer();
+            }
+
+            std::vector<Course> currentCourses;
+            double semTotalGradePoints = 0.0;
+            double semTotalCredits = 0.0;
+
+            for (int i = 0; i < courseCount; ++i) {
+                Course c;
+                std::cout << "\n--- Course " << (i + 1) << " ---\n";
+                std::cout << "Course Code: ";
+                std::cin >> c.courseCode;
+                clearBuffer();
+
+                std::cout << "Course Title: ";
+                std::getline(std::cin, c.courseName);
+
+                while (true) {
+                    std::cout << "Credit Hours (e.g., 2, 3, 4): ";
+                    if (std::cin >> c.credits && c.credits > 0) {
+                        break;
+                    }
+                    std::cout << "Invalid credits! Enter a positive value.\n";
+                    clearBuffer();
+                }
+
+                while (true) {
+                    std::cout << "Grade Obtained (O, A+, A, B+, B, C, P, F): ";
+                    std::cin >> c.grade;
+                    c.gradePoint = convertGradeToPoint(c.grade);
+                    if (c.gradePoint != -1.0) {
+                        break;
+                    }
+                    std::cout << "Invalid grade symbol! Try again.\n";
+                }
+
+                semTotalGradePoints += (c.gradePoint * c.credits);
+                semTotalCredits += c.credits;
+                currentCourses.push_back(c);
+            }
+
+            double gpa = (semTotalCredits > 0) ? (semTotalGradePoints / semTotalCredits) : 0.0;
+            semesterGPAs.push_back(gpa);
+            semesterCredits.push_back(semTotalCredits);
+
+            // Display Semester Summary Table
+            std::cout << "\n---------------------------------------------------------------\n";
+            std::cout << "Code\tTitle\t\tCredits\tGrade\tPoint\tCredit Points\n";
+            std::cout << "---------------------------------------------------------------\n";
+            for (const auto& c : currentCourses) {
+                std::cout << std::left << std::setw(8) << c.courseCode
+                          << std::setw(16) << (c.courseName.length() > 14 ? c.courseName.substr(0, 11) + "..." : c.courseName)
+                          << std::setw(8) << c.credits
+                          << std::setw(8) << c.grade
+                          << std::setw(8) << c.gradePoint
+                          << std::fixed << std::setprecision(2) << (c.gradePoint * c.credits)
+                          << "\n";
+            }
+            std::cout << "---------------------------------------------------------------\n";
+            std::cout << "Semester " << sem << " GPA: " << std::fixed << std::setprecision(2) << gpa << "\n";
+        }
+    }
+
+    void displayFinalTranscript() const {
+        double totalWeightedGP = 0.0;
+        double overallCredits = 0.0;
+
+        for (size_t i = 0; i < semesterGPAs.size(); ++i) {
+            totalWeightedGP += (semesterGPAs[i] * semesterCredits[i]);
+            overallCredits += semesterCredits[i];
+        }
+
+        double finalCGPA = (overallCredits > 0) ? (totalWeightedGP / overallCredits) : 0.0;
+
+        std::cout << "\n=======================================================\n";
+        std::cout << "               FINAL ACADEMIC TRANSCRIPT               \n";
+        std::cout << "=======================================================\n";
+        std::cout << "Student Name : " << studentName << "\n";
+        std::cout << "Roll Number  : " << rollNumber << "\n";
+        std::cout << "Semesters    : " << totalSemesters << "\n";
+        std::cout << "-------------------------------------------------------\n";
+
+        for (size_t i = 0; i < semesterGPAs.size(); ++i) {
+            std::cout << "Semester " << (i + 1) << " | Credits: " 
+                      << std::setw(5) << semesterCredits[i] 
+                      << " | GPA: " << std::fixed << std::setprecision(2) << semesterGPAs[i] << "\n";
+        }
+
+        std::cout << "-------------------------------------------------------\n";
+        std::cout << "Total Credits Completed : " << overallCredits << "\n";
+        std::cout << "Cumulative GPA (CGPA)   : " << std::fixed << std::setprecision(2) << finalCGPA << "\n";
+        
+        std::cout << "Academic Standing       : ";
+        if (finalCGPA >= 8.5) std::cout << "First Class with Distinction\n";
+        else if (finalCGPA >= 6.5) std::cout << "First Class\n";
+        else if (finalCGPA >= 5.0) std::cout << "Second Class\n";
+        else std::cout << "Needs Improvement\n";
+
+        std::cout << "=======================================================\n";
+    }
+};
+
+int main() {
+    std::string name, roll;
+    int semesters = 0;
+
+    std::cout << "===========================================\n";
+    std::cout << "         UNIVERSITY CGPA CALCULATOR        \n";
+    std::cout << "===========================================\n";
+
+    std::cout << "Enter Student Name: ";
+    std::getline(std::cin, name);
+
+    std::cout << "Enter Roll Number: ";
+    std::getline(std::cin, roll);
+
+    while (true) {
+        std::cout << "Enter total number of semesters to evaluate: ";
+        if (std::cin >> semesters && semesters > 0) {
+            break;
+        }
+        std::cout << "Invalid count! Must be at least 1 semester.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
+    CGPACalculator calculator(name, roll, semesters);
+    calculator.processSemesterResults();
+    calculator.displayFinalTranscript();
+
+    return 0;
+}
