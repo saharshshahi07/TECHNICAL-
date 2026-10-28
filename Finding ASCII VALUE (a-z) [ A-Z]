@@ -1,0 +1,18 @@
+#include <iostream>
+#include <cctype>
+
+int main() {
+    char ch;
+
+    std::cout << "Enter an English character [a-z, A-Z]: ";
+    std::cin >> ch;
+
+    // Check if the input is an English alphabet
+    if (std::isalpha(ch)) {
+        std::cout << "The ASCII value of '" << ch << "' is: " << int(ch) << "\n";
+    } else {
+        std::cout << "Invalid input! Please enter a valid English character.\n";
+    }
+
+    return 0;
+}
