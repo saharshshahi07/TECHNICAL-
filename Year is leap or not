@@ -1,0 +1,30 @@
+#include <iostream>
+
+bool isLeapYear(int year) {
+    // Leap year rules:
+    // 1. 400 se divisible ho -> Leap year
+    // 2. 100 se divisible ho -> Not a leap year
+    // 3. 4 se divisible ho -> Leap year
+    if ((year % 400 == 0) || (year % 4 == 0 && year % 100 != 0)) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    int year;
+
+    std::cout << "Enter a year: ";
+    if (!(std::cin >> year) || year <= 0) {
+        std::cout << "Invalid input! Please enter a valid positive year.\n";
+        return 1;
+    }
+
+    if (isLeapYear(year)) {
+        std::cout << year << " is a Leap Year.\n";
+    } else {
+        std::cout << year << " is not a Leap Year.\n";
+    }
+
+    return 0;
+}
