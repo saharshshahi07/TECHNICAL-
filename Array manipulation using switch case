@@ -1,0 +1,154 @@
+#include <iostream>
+#include <vector>
+#include <limits>
+
+void printArray(const std::vector<int>& arr) {
+    for (int val : arr) {
+        std::cout << val << " ";
+    }
+    std::cout << "\n";
+}
+
+int main() {
+    char choice;
+
+    std::cout << "===========================================\n";
+    std::cout << "        ARRAY MANIPULATION MENU            \n";
+    std::cout << "===========================================\n";
+    std::cout << "a. Add two Arrays\n";
+    std::cout << "b. Subtract two Arrays\n";
+    std::cout << "c. Multiplication of Array Elements\n";
+    std::cout << "d. Find Large & Small Element of Array\n";
+    std::cout << "e. Calculate Average of Numbers\n";
+    std::cout << "===========================================\n";
+    std::cout << "Enter your choice (a-e): ";
+    std::cin >> choice;
+
+    switch (choice) {
+        case 'a':
+        case 'A': {
+            int n;
+            std::cout << "\nEnter size of arrays: ";
+            std::cin >> n;
+
+            std::vector<int> arr1(n), arr2(n), result(n);
+
+            std::cout << "Enter " << n << " elements for First Array:\n";
+            for (int i = 0; i < n; ++i) std::cin >> arr1[i];
+
+            std::cout << "Enter " << n << " elements for Second Array:\n";
+            for (int i = 0; i < n; ++i) std::cin >> arr2[i];
+
+            for (int i = 0; i < n; ++i) {
+                result[i] = arr1[i] + arr2[i];
+            }
+
+            std::cout << "\nResultant Array after Addition:\n";
+            printArray(result);
+            break;
+        }
+
+        case 'b':
+        case 'B': {
+            int n;
+            std::cout << "\nEnter size of arrays: ";
+            std::cin >> n;
+
+            std::vector<int> arr1(n), arr2(n), result(n);
+
+            std::cout << "Enter " << n << " elements for First Array:\n";
+            for (int i = 0; i < n; ++i) std::cin >> arr1[i];
+
+            std::cout << "Enter " << n << " elements for Second Array:\n";
+            for (int i = 0; i < n; ++i) std::cin >> arr2[i];
+
+            for (int i = 0; i < n; ++i) {
+                result[i] = arr1[i] - arr2[i];
+            }
+
+            std::cout << "\nResultant Array after Subtraction (Arr1 - Arr2):\n";
+            printArray(result);
+            break;
+        }
+
+        case 'c':
+        case 'C': {
+            int n;
+            std::cout << "\nEnter number of elements: ";
+            std::cin >> n;
+
+            std::vector<int> arr(n);
+            long long product = 1;
+
+            std::cout << "Enter " << n << " elements:\n";
+            for (int i = 0; i < n; ++i) {
+                std::cin >> arr[i];
+                product *= arr[i];
+            }
+
+            std::cout << "Multiplication (Product) of all elements = " << product << "\n";
+            break;
+        }
+
+        case 'd':
+        case 'D': {
+            int n;
+            std::cout << "\nEnter number of elements: ";
+            std::cin >> n;
+
+            if (n <= 0) {
+                std::cout << "Array size must be greater than 0.\n";
+                break;
+            }
+
+            std::vector<int> arr(n);
+            std::cout << "Enter " << n << " elements:\n";
+            for (int i = 0; i < n; ++i) {
+                std::cin >> arr[i];
+            }
+
+            int largest = arr[0];
+            int smallest = arr[0];
+
+            for (int i = 1; i < n; ++i) {
+                if (arr[i] > largest) largest = arr[i];
+                if (arr[i] < smallest) smallest = arr[i];
+            }
+
+            std::cout << "Largest Element  : " << largest << "\n";
+            std::cout << "Smallest Element : " << smallest << "\n";
+            break;
+        }
+
+        case 'e':
+        case 'E': {
+            int n;
+            std::cout << "\nEnter total number of elements: ";
+            std::cin >> n;
+
+            if (n <= 0) {
+                std::cout << "Count must be greater than 0.\n";
+                break;
+            }
+
+            double sum = 0;
+            std::cout << "Enter " << n << " numbers:\n";
+            for (int i = 0; i < n; ++i) {
+                double val;
+                std::cin >> val;
+                sum += val;
+            }
+
+            double average = sum / n;
+            std::cout << "Sum     = " << sum << "\n";
+            std::cout << "Average = " << average << "\n";
+            break;
+        }
+
+        default:
+            std::cout << "Invalid choice! Please choose an option from a to e.\n";
+            break;
+    }
+
+    return 0;
+}
