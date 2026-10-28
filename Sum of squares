@@ -1,0 +1,15 @@
+#include <iostream>
+using namespace std;
+
+int main() {
+    int start = 5;
+    int end = 8;
+    int sum = 0;
+
+    for (int i = start; i <= end; i++) {
+        sum += (i * i);
+    }
+
+    cout << "5^2 + 6^2 + 7^2 + 8^2 = " << sum << endl;
+    return 0;
+}
