@@ -1,0 +1,24 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
+int main() {
+    std::string str;
+    std::cout << "Enter a string: ";
+    std::getline(std::cin, str);
+
+    // Custom sorting: Lowercase letters come first (alphabetically), then Uppercase letters
+    std::sort(str.begin(), str.end(), [](char a, char b) {
+        bool isLowerA = std::islower(static_cast<unsigned char>(a));
+        bool isLowerB = std::islower(static_cast<unsigned char>(b));
+
+        if (isLowerA != isLowerB) {
+            return isLowerA > isLowerB; // lowercase pehle aayega
+        }
+        return a < b; // standard alphabetical order
+    });
+
+    std::cout << "Sorted string: " << str << "\n";
+    return 0;
+}
